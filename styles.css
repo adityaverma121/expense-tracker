@@ -59,6 +59,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in oklab, va
 .form-actions{display:flex;gap:.5rem}
 button{appearance:none;border:1px solid transparent;background:var(--primary);color:white;padding:.6rem .9rem;border-radius:8px;cursor:pointer}
 button.secondary{background:white;color:var(--text);border-color:var(--border)}
+[data-theme="dark"] button.secondary{background:var(--card);color:var(--text);border-color:var(--border)}
+button.secondary:hover{border-color:var(--primary)}
 button.danger{background:transparent;color:var(--danger);border-color:var(--danger)}
 button:disabled{opacity:.6;cursor:not-allowed}
 
