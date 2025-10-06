@@ -8,6 +8,16 @@
   --danger:#dc2626;
   --success:#059669;
 }
+[data-theme="dark"]{
+  --bg:#0b1220;
+  --card:#0f172a;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#1f2937;
+  --primary:#60a5fa;
+  --danger:#f87171;
+  --success:#34d399;
+}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -18,6 +28,8 @@ body{
 }
 .container{max-width:1100px;margin:0 auto;padding:1rem}
 header h1{margin:0;font-size:1.6rem}
+.header-bar{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.header-actions{display:flex;gap:.5rem;flex-wrap:wrap}
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
@@ -37,6 +49,11 @@ header h1{margin:0;font-size:1.6rem}
 .form-row.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 label{font-size:.9rem;color:var(--muted)}
 input,select,textarea{width:100%;padding:.6rem .7rem;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text)}
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea{
+  background:#0b1220;
+}
 input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in oklab, var(--primary) 35%, white)}
 .error{min-height:1em;color:var(--danger);font-size:.8rem}
 .form-actions{display:flex;gap:.5rem}
@@ -52,6 +69,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .item-main{display:flex;flex-direction:column}
 .item-meta{display:flex;gap:.5rem;align-items:center;color:var(--muted);font-size:.9rem}
 .badge{display:inline-flex;align-items:center;gap:.4rem;background:#eef2ff;color:#3730a3;border-radius:999px;padding:.15rem .55rem;font-size:.8rem}
+[data-theme="dark"] .badge{background:#1f2937;color:#c7d2fe}
 .amount{font-weight:700}
 .description{color:var(--muted)}
 
@@ -63,6 +81,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .breakdown-label{color:var(--muted)}
 .bar{height:10px;background:#eef2ff;border-radius:6px;overflow:hidden}
 .bar > span{display:block;height:100%;background:var(--primary)}
+[data-theme="dark"] .bar{background:#1f2937}
 .breakdown-value{font-variant-numeric: tabular-nums}
 
 footer{color:var(--muted)}
