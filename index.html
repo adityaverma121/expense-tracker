@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personal Expense Tracker</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="container">
+    <h1>Personal Expense Tracker</h1>
+  </header>
+
+  <main class="container grid">
+    <section class="card" id="add-expense">
+      <h2>Add Expense</h2>
+      <form id="expense-form" novalidate>
+        <div class="form-row">
+          <label for="amount">Amount</label>
+          <input type="number" id="amount" name="amount" min="0.01" step="0.01" required />
+          <div class="error" data-error-for="amount"></div>
+        </div>
+        <div class="form-row">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="" disabled selected>Select category</option>
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Entertainment</option>
+            <option>Bills</option>
+            <option>Shopping</option>
+            <option>Other</option>
+          </select>
+          <div class="error" data-error-for="category"></div>
+        </div>
+        <div class="form-row">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required />
+          <div class="error" data-error-for="date"></div>
+        </div>
+        <div class="form-row">
+          <label for="description">Description (optional)</label>
+          <input type="text" id="description" name="description" maxlength="120" placeholder="e.g., Lunch at cafe" />
+        </div>
+        <div class="form-actions">
+          <button type="submit">Add Expense</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" id="filters">
+      <h2>Filters</h2>
+      <div class="form-row">
+        <label for="filter-category">Category</label>
+        <select id="filter-category">
+          <option value="ALL">All</option>
+          <option>Food</option>
+          <option>Transport</option>
+          <option>Entertainment</option>
+          <option>Bills</option>
+          <option>Shopping</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-row two-col">
+        <div>
+          <label for="filter-from">From</label>
+          <input type="date" id="filter-from" />
+        </div>
+        <div>
+          <label for="filter-to">To</label>
+          <input type="date" id="filter-to" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button id="clear-filters" type="button" class="secondary">Clear Filters</button>
+      </div>
+    </section>
+
+    <section class="card" id="stats">
+      <h2>Statistics</h2>
+      <div class="stats-grid">
+        <div>
+          <div class="stat-label">Total Spent</div>
+          <div class="stat-value" id="stat-total">—</div>
+        </div>
+        <div>
+          <div class="stat-label">Transactions</div>
+          <div class="stat-value" id="stat-count">—</div>
+        </div>
+      </div>
+      <div id="category-breakdown" class="breakdown"></div>
+    </section>
+
+    <section class="card" id="expenses">
+      <h2>Expenses</h2>
+      <div id="empty-state" class="empty">No expenses yet.</div>
+      <ul id="expense-list" class="list"></ul>
+    </section>
+  </main>
+
+  <footer class="container">
+    <small>Local device storage only.</small>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
