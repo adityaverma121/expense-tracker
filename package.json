@@ -1,0 +1,26 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "A lightweight, single‑page web application to record, filter, and analyze personal expenses. It runs entirely in the browser (no backend) and persists data using `localStorage`. The UI is responsive, mobile‑friendly, and includes a dark mode.",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adityaverma121/expense-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adityaverma121/expense-tracker/issues"
+  },
+  "homepage": "https://github.com/adityaverma121/expense-tracker#readme",
+  "devDependencies": {
+    "puppeteer": "^24.23.0"
+  }
+}

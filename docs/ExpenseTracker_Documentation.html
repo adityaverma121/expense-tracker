@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personal Expense Tracker – Documentation</title>
+  <style>
+    :root{
+      --text:#111827; --muted:#6b7280; --border:#e5e7eb; --primary:#2563eb;
+    }
+    html,body{height:100%}
+    body{font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial; color:var(--text); margin:0;}
+    .container{max-width:900px;margin:0 auto;padding:24px}
+    h1{font-size:1.8rem;margin:.25rem 0 1rem}
+    h2{font-size:1.2rem;margin:1.5rem 0 .5rem}
+    h3{font-size:1rem;margin:1rem 0 .25rem}
+    p{line-height:1.6}
+    code,kbd{background:#f3f4f6;border:1px solid var(--border);border-radius:6px;padding:0 .25rem}
+    .muted{color:var(--muted)}
+    .card{border:1px solid var(--border);border-radius:12px;padding:16px;margin:12px 0}
+    ul{margin:.5rem 0 .5rem 1.25rem}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{border:1px solid var(--border);padding:8px;text-align:left}
+    .hr{height:1px;background:var(--border);margin:16px 0}
+    .page-break{page-break-before:always}
+    @media print{
+      a[href]::after{content:" (" attr(href) ")"; font-size:10px; color:#6b7280}
+      .no-print{display:none}
+      body{font-size:12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Personal Expense Tracker – Documentation</h1>
+    <p class="muted">Version: 1.0 • Date: <span id="doc-date"></span></p>
+
+    <div class="card">
+      <h2>Overview</h2>
+      <p>A lightweight, single‑page web application to record, filter, and analyze personal expenses. The app runs entirely in the browser and persists data via <code>localStorage</code>. It includes a responsive UI, dark mode, CSV export, and statistics.</p>
+    </div>
+
+    <h2>Key Features</h2>
+    <ul>
+      <li><strong>Add expenses:</strong> amount, category, date, optional description with validation</li>
+      <li><strong>List & delete:</strong> view all expenses; delete entries</li>
+      <li><strong>Filtering:</strong> by category and date range</li>
+      <li><strong>Statistics:</strong> total, category breakdown, monthly summary</li>
+      <li><strong>Dark mode:</strong> toggle with persisted preference</li>
+      <li><strong>Export CSV:</strong> client‑side download of stored expenses</li>
+      <li><strong>Responsive:</strong> mobile‑friendly layout</li>
+    </ul>
+
+    <div class="hr"></div>
+
+    <h2>Architecture</h2>
+    <ul>
+      <li><code>index.html</code>: semantic layout – header, add‑form, filters, statistics, expense list</li>
+      <li><code>styles.css</code>: light/dark CSS variables, component styling, responsive grid</li>
+      <li><code>app.js</code>: state management, storage, validation, rendering, CSV export</li>
+    </ul>
+
+    <h2>Data Model</h2>
+    <table class="table">
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>id</td><td>string</td><td>Client‑generated unique identifier</td></tr>
+        <tr><td>amount</td><td>number</td><td>Positive currency amount</td></tr>
+        <tr><td>category</td><td>string</td><td>One of: Food, Transport, Entertainment, Bills, Shopping, Other</td></tr>
+        <tr><td>date</td><td>YYYY‑MM‑DD</td><td>Transaction date (not in the future)</td></tr>
+        <tr><td>description</td><td>string</td><td>Optional short text</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Storage</h2>
+    <ul>
+      <li><code>localStorage["expenses_v1"]</code>: JSON array of expense objects</li>
+      <li><code>localStorage["theme_preference_v1"]</code>: <code>"light"</code> or <code>"dark"</code></li>
+    </ul>
+
+    <h2>Validation Rules</h2>
+    <ul>
+      <li>Amount must be a positive number</li>
+      <li>Date is required and cannot be in the future</li>
+      <li>Category selection is required</li>
+    </ul>
+
+    <h2>Filtering Logic</h2>
+    <ul>
+      <li>Category filter: exact match (or ALL)</li>
+      <li>Date from/to: inclusive comparison on ISO date strings</li>
+      <li>Results sorted by date desc, then id desc</li>
+    </ul>
+
+    <h2>Statistics</h2>
+    <ul>
+      <li><strong>Total:</strong> sum of amounts of filtered expenses</li>
+      <li><strong>Category breakdown:</strong> grouped totals with proportional bars</li>
+      <li><strong>Monthly summary:</strong> totals grouped by <code>YYYY‑MM</code> with bars</li>
+    </ul>
+
+    <h2>Dark Mode</h2>
+    <ul>
+      <li>Applied via <code>[data-theme]</code> attribute on <code>&lt;html&gt;</code></li>
+      <li>Preference stored in <code>theme_preference_v1</code>; falls back to system preference</li>
+      <li>Secondary button contrast adjusted for dark theme</li>
+    </ul>
+
+    <h2>CSV Export</h2>
+    <ul>
+      <li>Filename pattern: <code>expenses_YYYYMMDD.csv</code></li>
+      <li>Columns: <code>id,date,category,amount,description</code></li>
+      <li>CSV escaping: quotes doubled; fields with special characters quoted</li>
+    </ul>
+
+    <div class="card">
+      <h2>Setup & Usage</h2>
+      <ol>
+        <li>Open <code>index.html</code> in a modern browser, or serve locally: <code>python3 -m http.server 5173</code></li>
+        <li>Add expenses using the form; use filters to narrow results</li>
+        <li>Toggle dark/light via the header button (persists across reloads)</li>
+        <li>Export data with the <em>Export CSV</em> button</li>
+      </ol>
+    </div>
+
+    <h2>Accessibility</h2>
+    <ul>
+      <li>Theme toggle uses <code>aria-pressed</code> for state indication</li>
+      <li>Focus outlines retained; keyboard navigation supported by native controls</li>
+    </ul>
+
+    <h2>Limitations</h2>
+    <ul>
+      <li>Data is device‑local only (no sync)</li>
+      <li>No edit/update UI (delete and re‑add)</li>
+      <li>Currency formatter is INR; adjust in <code>app.js</code> if needed</li>
+    </ul>
+
+    <h2>Test Plan (Quick)</h2>
+    <ul>
+      <li>Add: valid, invalid (negative amount, future date)</li>
+      <li>Filter: category, date range, and clear filters</li>
+      <li>Delete: remove item and verify stats update</li>
+      <li>Dark mode: toggle and refresh (preference persists)</li>
+      <li>Export CSV: open file and verify headers/values</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <h2>Change Log</h2>
+    <ul>
+      <li>v1.0: Initial release with add/list/delete, filters, stats, dark mode, CSV export</li>
+      <li>v1.0.1: Improve dark mode contrast for secondary buttons</li>
+      <li>v1.0.2: Add documentation (this file)</li>
+    </ul>
+
+    <div class="hr"></div>
+    <p class="muted">This document is generated and maintained alongside the codebase.</p>
+  </div>
+  <script>
+    document.getElementById('doc-date').textContent = new Date().toISOString().slice(0,10);
+  </script>
+</body>
+</html>
