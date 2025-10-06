@@ -10,6 +10,7 @@ const CATEGORIES = [
 ];
 
 const STORAGE_KEY = "expenses_v1";
+const THEME_KEY = "theme_preference_v1"; // "light" | "dark"
 
 function readExpenses() {
   try {
@@ -165,6 +166,7 @@ function renderStats(expenses) {
   const totalEl = document.getElementById("stat-total");
   const countEl = document.getElementById("stat-count");
   const breakdownEl = document.getElementById("category-breakdown");
+  const monthlyEl = document.getElementById("monthly-summary");
 
   const total = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
   totalEl.textContent = toCurrency(total);
@@ -180,7 +182,7 @@ function renderStats(expenses) {
     empty.className = "empty";
     empty.textContent = "No data for breakdown.";
     breakdownEl.appendChild(empty);
-    return;
+    // fall through to clear monthly too
   }
 
   const max = Math.max(...byCategory.values());
@@ -206,6 +208,49 @@ function renderStats(expenses) {
 
     row.append(label, bar, value);
     breakdownEl.appendChild(row);
+  }
+
+  // Monthly summary: group by yyyy-mm
+  if (monthlyEl) {
+    monthlyEl.innerHTML = "";
+    const byMonth = new Map();
+    for (const e of expenses) {
+      const d = new Date(e.date);
+      if (isNaN(d)) continue;
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      byMonth.set(key, (byMonth.get(key) || 0) + Number(e.amount || 0));
+    }
+    if (byMonth.size === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "No data for monthly summary.";
+      monthlyEl.appendChild(empty);
+    } else {
+      const maxM = Math.max(...byMonth.values());
+      const entriesM = Array.from(byMonth.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+      for (const [month, amount] of entriesM) {
+        const row = document.createElement("div");
+        row.className = "breakdown-row";
+
+        const label = document.createElement("div");
+        label.className = "breakdown-label";
+        label.textContent = month;
+
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        const fill = document.createElement("span");
+        const pct = maxM > 0 ? Math.round((amount / maxM) * 100) : 0;
+        fill.style.width = `${pct}%`;
+        bar.appendChild(fill);
+
+        const value = document.createElement("div");
+        value.className = "breakdown-value";
+        value.textContent = toCurrency(amount);
+
+        row.append(label, bar, value);
+        monthlyEl.appendChild(row);
+      }
+    }
   }
 }
 
@@ -276,6 +321,28 @@ function renderAll() {
 
 function init() {
   syncDateMaxes();
+  // Theme setup
+  const rootHtml = document.documentElement;
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+  rootHtml.setAttribute('data-theme', initialTheme);
+  const themeBtn = document.getElementById("theme-toggle");
+  if (themeBtn) {
+    const setBtnState = () => {
+      const isDark = rootHtml.getAttribute('data-theme') === 'dark';
+      themeBtn.setAttribute('aria-pressed', String(isDark));
+      themeBtn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+    };
+    setBtnState();
+    themeBtn.addEventListener('click', () => {
+      const current = rootHtml.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      rootHtml.setAttribute('data-theme', next);
+      localStorage.setItem(THEME_KEY, next);
+      setBtnState();
+    });
+  }
   const form = document.getElementById("expense-form");
   if (form) {
     form.date.value = todayISO();
@@ -296,6 +363,53 @@ function init() {
 
   const clearBtn = document.getElementById("clear-filters");
   clearBtn && clearBtn.addEventListener("click", () => { clearFiltersUI(); readFilterUI(); renderAll(); });
+
+  // Export CSV
+  const exportBtn = document.getElementById('export-csv');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      const rows = readExpenses();
+      if (!rows || rows.length === 0) {
+        // no data
+        const blob = new Blob(["id,date,category,amount,description\n"], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `expenses.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return;
+      }
+      const escapeCell = (v) => {
+        if (v === null || v === undefined) return '';
+        const s = String(v).replace(/"/g, '""');
+        if (/[",\n]/.test(s)) return '"' + s + '"';
+        return s;
+      };
+      const header = ["id","date","category","amount","description"];
+      const lines = [header.join(',')];
+      for (const e of rows) {
+        const line = [e.id, e.date, e.category, e.amount, e.description || ''].map(escapeCell).join(',');
+        lines.push(line);
+      }
+      const csv = lines.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const ts = new Date();
+      const y = ts.getFullYear();
+      const m = String(ts.getMonth()+1).padStart(2,'0');
+      const d = String(ts.getDate()).padStart(2,'0');
+      a.download = `expenses_${y}${m}${d}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
 
   readFilterUI();
   renderAll();
